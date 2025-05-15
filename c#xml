@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>            <!-- ✅ Force 64-bit build -->
+    <Prefer32Bit>false</Prefer32Bit>                <!-- ✅ Prevent fallback to 32-bit -->
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- ✅ Only keep the correct pythonnet version -->
+    <PackageReference Include="pythonnet" Version="3.0.5" />
+  </ItemGroup>
+  <ItemGroup>
+  <None Include="Python_Runtime\**\*">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
+</ItemGroup>
+<ItemGroup>
+  <FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" />
+</ItemGroup>
+
+</Project>
