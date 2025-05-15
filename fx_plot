@@ -1,0 +1,33 @@
+# fx_plot.py
+
+import warnings
+warnings.filterwarnings("ignore")
+
+import pandas as pd
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import base64
+
+def generate_ohlc_plot(csv_path, output_path):
+    try:
+        df = pd.read_csv(csv_path)
+        df_inr = df[df["Currency"] == "INR"].copy()
+        df_inr.loc[:, "Date"] = pd.to_datetime(df_inr["Date"])
+        df_inr.sort_values("Date", inplace=True)
+
+        plt.figure(figsize=(10, 5))
+        plt.plot(df_inr["Date"], df_inr["Open"], label="Open")
+        plt.plot(df_inr["Date"], df_inr["High"], label="High")
+        plt.plot(df_inr["Date"], df_inr["Low"], label="Low")
+        plt.plot(df_inr["Date"], df_inr["Close"], label="Close")
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig(output_path)
+        plt.close()
+
+        with open(output_path, "rb") as f:
+            return base64.b64encode(f.read()).decode("utf-8")
+
+    except Exception as e:
+        return f"ERROR: {str(e)}"
