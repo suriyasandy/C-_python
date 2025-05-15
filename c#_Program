@@ -1,0 +1,76 @@
+using System;
+using System.IO;
+using System.Drawing;
+using System.Windows.Forms;
+using Python.Runtime;
+
+class Program
+{
+    [STAThread]
+    static void Main(string[] args)
+    {
+        string fxPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python_Runtime");
+        string csvPath = Path.Combine(fxPath, "reuters_fx_data.csv");
+        string outputPng = Path.Combine(fxPath, "inr_ohlc_plot.png");
+        string pythonDllPath = Path.Combine(fxPath, "python39.dll");
+
+        // Set Python DLL
+        Runtime.PythonDLL = pythonDllPath;
+
+        // Set Python environment
+        Environment.SetEnvironmentVariable("PYTHONHOME", fxPath);
+        Environment.SetEnvironmentVariable("PYTHONPATH",
+            $"{Path.Combine(fxPath, "Lib")};{Path.Combine(fxPath, "Lib", "site-packages")};{Path.Combine(fxPath, "DLLs")}");
+
+        PythonEngine.Initialize();
+
+        using (Py.GIL())
+        {
+            try
+            {
+                // Corrected: no "sfx_plot"
+                dynamic fx = Py.Import("fx_processor_dll");  // Must match fx_plot.cp39-win_amd64.pyd
+                string base64Image = fx.generate_ohlc_plot(csvPath, outputPng);
+
+                if (base64Image.StartsWith("ERROR"))
+                {
+                    Console.WriteLine(base64Image);
+                }
+                else
+                {
+                    // Convert base64 → Image
+                    byte[] imageBytes = Convert.FromBase64String(base64Image);
+                    using var ms = new MemoryStream(imageBytes);
+                    Image chartImage = Image.FromStream(ms);
+
+                    // Show in WinForms window
+                    Form form = new Form();
+                    PictureBox box = new PictureBox
+                    {
+                        Image = chartImage,
+                        Dock = DockStyle.Fill,
+                        SizeMode = PictureBoxSizeMode.Zoom
+                    };
+
+                    form.Controls.Add(box);
+                    form.Text = "INR OHLC Chart";
+                    form.WindowState = FormWindowState.Maximized;
+                    // 👇 Automatically close the app when chart is closed
+                    form.FormClosed += (s, e) =>
+                    {
+                        Application.Exit(); // ensures app exits cleanly
+                    };
+
+                    Application.Run(form);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("❌ Python exception: " + ex.Message);
+            }
+        }
+
+        // (Optional) Only use in .NET 6. Not in .NET 8 due to BinaryFormatter block.
+        // PythonEngine.Shutdown();
+    }
+}
