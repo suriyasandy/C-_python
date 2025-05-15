@@ -1,0 +1,39 @@
+import os
+from setuptools import setup, Extension
+from Cython.Build import cythonize
+import sysconfig
+
+python_include = sysconfig.get_paths()["include"]
+# Fallback: specify directly since LIBDIR might be None
+python_libs = r"C:\Users\Asus\AppData\Local\Programs\Python\Python39\libs"  # Adjust if different
+python_version = "39"  # Python 3.9
+
+extensions = [
+    Extension(
+        name="fx_processor_dll",
+        sources=["fx_processor.py"],
+        include_dirs=[
+            python_include,
+            r"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt",
+            r"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared",
+            r"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um"
+        ],
+        library_dirs=[
+            python_libs,
+            r"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\ucrt\x64",
+            r"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\um\x64"
+        ],
+        libraries=[
+            f"python{python_version}",  # Will link to python39.lib
+            "ucrt", "msvcrt", "kernel32"
+        ],
+        extra_compile_args=["/O2"],
+        extra_link_args=[],
+        language="c"
+    )
+]
+
+setup(
+    name="fx_analysis",
+    ext_modules=cythonize(extensions, compiler_directives={"language_level": "3"}),
+)
