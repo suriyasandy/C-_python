@@ -1,0 +1,27 @@
+from pywinauto.application import Application
+import time
+
+# Connect to PCOMM session window
+app = Application(backend="win32").connect(title_re=".*Session A.*")
+dlg = app.window(title_re=".*Session A.*")
+
+# Focus the session window
+dlg.set_focus()
+time.sleep(1)
+
+# Step 1: Type username
+dlg.type_keys("your_userid", with_spaces=True)
+time.sleep(1)
+
+# Step 2: Press TAB or DOWN to move to password field
+dlg.type_keys("{TAB}", with_spaces=True)
+# OR try:
+# dlg.type_keys("{DOWN}", with_spaces=True)
+time.sleep(1)
+
+# Step 3: Type password
+dlg.type_keys("your_password", with_spaces=True)
+time.sleep(1)
+
+# Step 4: Press Enter to submit
+dlg.type_keys("{ENTER}")
