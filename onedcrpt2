@@ -1,0 +1,48 @@
+from pywinauto.application import Application
+import time
+
+# --- Configuration ---
+SESSION_TITLE = "Session A"          # Change this to match your PCOMM window title
+USERNAME = "your_userid"             # Replace with your actual username
+PASSWORD = "your_password"           # Replace with your actual password
+USERNAME_POS = (6, 53)               # Row 06 / Col 053 (1-based)
+PASSWORD_POS = (7, 53)               # Row 07 / Col 053 (1-based)
+
+# --- Connect to the PCOMM Window ---
+print("Connecting to PCOMM window...")
+app = Application(backend="win32").connect(title_re=f".*{SESSION_TITLE}.*")
+dlg = app.window(title_re=f".*{SESSION_TITLE}.*")
+
+# --- Focus the session window ---
+dlg.set_focus()
+time.sleep(1)
+
+# --- Move to username field (row 6, col 53) ---
+dlg.type_keys("{HOME}")  # go to top-left of screen
+for _ in range(USERNAME_POS[0] - 1):  # Move down to row 6
+    dlg.type_keys("{DOWN}")
+for _ in range(USERNAME_POS[1] - 1):  # Move right to col 53
+    dlg.type_keys("{RIGHT}")
+time.sleep(0.5)
+
+# --- Enter Username ---
+dlg.type_keys(USERNAME, with_spaces=True)
+time.sleep(1)
+
+# --- Move to password field (row 7, col 53) ---
+dlg.type_keys("{ENTER}")  # Usually moves to next field, or reset
+dlg.type_keys("{HOME}")
+for _ in range(PASSWORD_POS[0] - 1):  # Move to row 7
+    dlg.type_keys("{DOWN}")
+for _ in range(PASSWORD_POS[1] - 1):  # Move to col 53
+    dlg.type_keys("{RIGHT}")
+time.sleep(0.5)
+
+# --- Enter Password ---
+dlg.type_keys(PASSWORD, with_spaces=True)
+time.sleep(1)
+
+# --- Submit Login ---
+dlg.type_keys("{ENTER}")
+
+print("Login keys sent successfully.")
