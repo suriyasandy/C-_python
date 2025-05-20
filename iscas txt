@@ -1,0 +1,38 @@
+from py3270 import Emulator
+import time
+
+# --- Configuration ---
+HOST = "your.iacs.host.com"  # Replace with the actual host from PCOMM
+PORT = "23"                  # Use 23 (TN3270) or 992 (for TLS)
+USERNAME = "your_userid"
+PASSWORD = "your_password"
+
+# --- Start Emulator ---
+em = Emulator(visible=False, timeout=60)
+
+# Optional: for TLS (if using port 992)
+# em = Emulator(visible=False, args=["-tls"])
+
+# --- Connect to Host ---
+print(f"Connecting to {HOST}:{PORT}...")
+em.connect(f"{HOST}:{PORT}")
+em.wait_for_field()
+
+# --- Automate Login ---
+print("Sending Username...")
+em.send_string(USERNAME)
+em.send_enter()
+time.sleep(1)
+
+print("Sending Password...")
+em.send_string(PASSWORD)
+em.send_enter()
+time.sleep(2)
+
+# --- Capture Screen Output ---
+screen_text = em.screen_get()
+print("=== Mainframe Screen Output ===")
+print(screen_text)
+
+# --- Close session ---
+em.terminate()
