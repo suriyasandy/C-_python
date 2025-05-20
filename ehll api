@@ -1,0 +1,24 @@
+import pyhllapi
+import time
+
+# Connect to session A
+pyhllapi.start('A')
+
+# Clear screen and send login
+pyhllapi.sendkeys('@E')  # @E is Enter key
+time.sleep(1)
+
+pyhllapi.sendkeys('your_user_id')
+pyhllapi.sendkeys('@E')
+time.sleep(1)
+
+pyhllapi.sendkeys('your_password')
+pyhllapi.sendkeys('@E')
+
+# Wait and read screen content
+time.sleep(2)
+screen_text = pyhllapi.copy()
+print(screen_text)
+
+# Disconnect
+pyhllapi.stop()
