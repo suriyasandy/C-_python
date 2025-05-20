@@ -1,0 +1,20 @@
+from pywinauto import Desktop
+
+print("Checking visible windows...\n")
+
+# Use both backends to test which detects your session
+print("--- UIA Backend ---")
+try:
+    uia_desktop = Desktop(backend="uia")
+    for w in uia_desktop.windows():
+        print("UIA:", w.window_text())
+except Exception as e:
+    print("UIA backend error:", e)
+
+print("\n--- Win32 Backend ---")
+try:
+    win32_desktop = Desktop(backend="win32")
+    for w in win32_desktop.windows():
+        print("Win32:", w.window_text())
+except Exception as e:
+    print("Win32 backend error:", e)
