@@ -1,0 +1,17 @@
+# filename: iacs_automation.py
+from py3270 import Emulator
+
+em = Emulator(visible=False)  # headless
+em.connect('your.iacs.hostname.com:23')  # use the host and port from your PCOMM session
+em.wait_for_field()
+
+em.send_string('your_userid')
+em.send_enter()
+
+em.send_string('your_password')
+em.send_enter()
+
+print("Logged in. Screen content:")
+print(em.screen_get())
+
+em.terminate()
