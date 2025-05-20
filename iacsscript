@@ -1,0 +1,24 @@
+from pywinauto.application import Application
+import time
+
+# Connect to open PCOMM session
+app = Application(backend="uia").connect(title_re=".*Session A.*")
+
+# Get main window
+dlg = app.window(title_re=".*Session A.*")
+
+# Focus the window
+dlg.set_focus()
+time.sleep(1)
+
+# Send username
+dlg.type_keys("your_userid")
+dlg.type_keys("{ENTER}")
+time.sleep(1)
+
+# Send password
+dlg.type_keys("your_password")
+dlg.type_keys("{ENTER}")
+time.sleep(2)
+
+print("Login sequence sent successfully.")
