@@ -1,0 +1,39 @@
+from pywinauto.application import Application
+import time
+
+# Connect to PCOMM session window (adjust title if needed)
+app = Application(backend="win32").connect(title_re=".*Session A.*")
+dlg = app.window(title_re=".*Session A.*")
+
+# Focus the window
+dlg.set_focus()
+time.sleep(1)
+
+# Move cursor to position 06/053
+dlg.type_keys("{HOME}")  # go to top-left of screen
+for _ in range(5):       # move to row 6
+    dlg.type_keys("{DOWN}")
+for _ in range(52):      # move to column 53 (0-indexed)
+    dlg.type_keys("{RIGHT}")
+time.sleep(0.5)
+
+# Type the username
+dlg.type_keys("your_userid", with_spaces=True)
+time.sleep(1)
+
+# Move cursor to position 07/053
+dlg.type_keys("{ENTER}")  # usually moves to next field, or reset position
+dlg.type_keys("{HOME}")
+for _ in range(6):       # move to row 7
+    dlg.type_keys("{DOWN}")
+for _ in range(52):
+    dlg.type_keys("{RIGHT}")
+time.sleep(0.5)
+
+# Type the password
+dlg.type_keys("your_password", with_spaces=True)
+time.sleep(1)
+
+# Press Enter to submit
+dlg.type_keys("{ENTER}")
+print("Login submitted.")
