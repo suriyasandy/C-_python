@@ -1,0 +1,38 @@
+bool LoginToIacsViaPython()
+{
+    try
+    {
+        Process p = new Process();
+        p.StartInfo = new ProcessStartInfo
+        {
+            FileName = "python",
+            Arguments = "\"C:\\IACS\\iacs_login.py\"",
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        p.Start();
+
+        string output = p.StandardOutput.ReadToEnd().Trim();
+        p.WaitForExit();
+
+        return output == "LOGIN_OK";
+    }
+    catch
+    {
+        return false;
+    }
+}
+
+// Before continuing in C#
+if (LoginToIacsViaPython())
+{
+    Console.WriteLine("Python login succeeded, continuing with C# interaction...");
+
+    // >>> Now use your existing C# automation code here <<<
+}
+else
+{
+    Console.WriteLine("Python login failed.");
+}
