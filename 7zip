@@ -1,0 +1,6 @@
+import py7zr
+
+with py7zr.SevenZipFile('archive.7z', mode='r') as z:
+    z.extractall(path='output_folder')
+
+print("7z extraction complete.")
