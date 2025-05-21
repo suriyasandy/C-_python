@@ -1,0 +1,14 @@
+import zipfile
+import os
+
+# Path to the zip file
+zip_path = "path/to/your/file.zip"
+
+# Destination folder to extract files
+extract_to = "path/to/extract/folder"
+
+# Unzipping
+with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+    zip_ref.extractall(extract_to)
+
+print("Extraction complete.")
