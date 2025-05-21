@@ -1,0 +1,72 @@
+using System;
+using System.IO;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Forms;
+using Python.Runtime;
+
+class Program
+{
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    [STAThread]
+    static void Main(string[] args)
+    {
+        string fxPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python_Runtime");
+        string pythonDllPath = Path.Combine(fxPath, "python39.dll");
+
+        Runtime.PythonDLL = pythonDllPath;
+
+        Environment.SetEnvironmentVariable("PYTHONHOME", fxPath);
+        Environment.SetEnvironmentVariable("PYTHONPATH",
+            $"{Path.Combine(fxPath, "Lib")};{Path.Combine(fxPath, "Lib", "site-packages")};{Path.Combine(fxPath, "DLLs")}");
+
+        PythonEngine.Initialize();
+
+        using (Py.GIL())
+        {
+            try
+            {
+                dynamic iacs = Py.Import("iacs_login");
+                iacs.login(); // Your Python login function
+                Console.WriteLine("Python login done.");
+            }
+            catch (PythonException pyEx)
+            {
+                Console.WriteLine("Python error: " + pyEx.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("C# error: " + ex.Message);
+            }
+        }
+
+        PythonEngine.Shutdown();
+
+        // Now use C# to send keys
+        Console.WriteLine("Now sending Enter key from C#...");
+
+        // Find PCOMM session process
+        Process[] pcsws = Process.GetProcessesByName("pcsws");
+        if (pcsws.Length > 0)
+        {
+            IntPtr hWnd = pcsws[0].MainWindowHandle;
+
+            // Focus the PCOMM window
+            SetForegroundWindow(hWnd);
+            Thread.Sleep(1000); // Ensure it's focused
+
+            // Send {ENTER}
+            SendKeys.SendWait("{ENTER}");
+            Console.WriteLine("ENTER key sent.");
+        }
+        else
+        {
+            Console.WriteLine("PCOMM session (pcsws.exe) not found.");
+        }
+
+        Console.WriteLine("Finished.");
+    }
+}
