@@ -1,0 +1,56 @@
+using System;
+using System.Diagnostics;
+
+namespace IacsAutomation
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Attempting to log in via Python...");
+
+            if (LoginToIacsViaPython())
+            {
+                Console.WriteLine("Python login succeeded. Continuing with C# interaction...");
+
+                // --- Insert your existing C# post-login automation here ---
+                // For example:
+                // SendKeys.SendWait("pf3");
+                // Interact with PCOMM window
+            }
+            else
+            {
+                Console.WriteLine("Python login failed. Cannot continue.");
+            }
+        }
+
+        static bool LoginToIacsViaPython()
+        {
+            try
+            {
+                Process p = new Process();
+                p.StartInfo = new ProcessStartInfo
+                {
+                    FileName = "python", // or full path like @"C:\Python311\python.exe"
+                    Arguments = "\"C:\\IACS\\iacs_login.py\"",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                p.Start();
+
+                string output = p.StandardOutput.ReadToEnd().Trim();
+                p.WaitForExit();
+
+                Console.WriteLine("Python Output: " + output);
+                return output == "LOGIN_OK";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error running Python login: " + ex.Message);
+                return false;
+            }
+        }
+    }
+}
