@@ -1,0 +1,7 @@
+def _crop_presentation_space(img):
+    return img.crop((
+        649,    # left
+        332,    # top
+        649 + 640,  # right = left + 640
+        332 + 384   # bottom = top + 384
+    ))
