@@ -1,0 +1,14 @@
+def _crop_presentation_space(img):
+    # Terminal dimensions
+    term_width = 80 * 8    # 640
+    term_height = 24 * 16  # 384
+
+    # Full image dimensions
+    img_w, img_h = img.size
+
+    left = (img_w - term_width) // 2
+    top = (img_h - term_height) // 2
+    right = left + term_width
+    bottom = top + term_height
+
+    return img.crop((left, top, right, bottom))
