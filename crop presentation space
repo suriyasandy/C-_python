@@ -1,0 +1,19 @@
+def _crop_presentation_space(img):
+    # Full image dimensions
+    img_w, img_h = img.size
+    
+    # Estimate character dimensions
+    char_w = img_w // 80
+    char_h = img_h // 24
+    
+    # Calculate presentation space size
+    term_w = 80 * char_w
+    term_h = 24 * char_h
+
+    # Center terminal box in the image
+    left = (img_w - term_w) // 2
+    top = (img_h - term_h) // 2
+    right = left + term_w
+    bottom = top + term_h
+
+    return img.crop((left, top, right, bottom))
