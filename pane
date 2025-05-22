@@ -1,0 +1,4 @@
+dlg = app.window(title_re=".*5250 Display")
+canvas = dlg.child_window(title="256", control_type="Pane")
+canvas.draw_outline()  # Show border around it
+canvas.capture_as_image().save("maybe_terminal_area.png")
