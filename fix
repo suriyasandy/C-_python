@@ -1,0 +1,17 @@
+from io import BytesIO
+
+def _pil_to_jpeg_bytes(pil_img):
+    with BytesIO() as output:
+        pil_img.save(output, format='JPEG')
+        return output.getvalue()
+
+def copy_presentation_space():
+    if _connected_window:
+        try:
+            img = _connected_window.capture_as_image()
+            img_bytes = _pil_to_jpeg_bytes(img)
+            result = _reader.readtext(img_bytes)
+            return " ".join([text for _, text, _ in result])
+        except Exception as e:
+            return f"[OCR ERROR] {e}"
+    return ""
